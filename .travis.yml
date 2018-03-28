@@ -10,7 +10,7 @@ addons:
     - shellcheck
 
 script:
- - shellcheck -s bash ./idd.sh
+ - shellcheck -s bash ./ya-ddns
 
 notifications:
     webhooks:
