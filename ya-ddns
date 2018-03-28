@@ -32,7 +32,7 @@ fi
 # После того, как запись добавлена и необходимые параметры
 # заменены в этом скрипте, достаточно просто запустить скрипт
 # без параметров.
-if [[ $ip != $last_ip ]]; then
+if [[ "$ip" != "$last_ip" ]]; then
 	post=$(curl -H "PddToken: $TOKEN" -d "domain=$DOMAIN&record_id=$RECORD_ID&subdomain=$SUBDOMAIN&ttl=$TTL&content=$ip" "https://pddimp.yandex.ru/api2/admin/dns/edit")
 	answer=$(echo "$post" | grep -i "\"success\": \"ok\"")
 	if [[ $answer != "" ]]; then
