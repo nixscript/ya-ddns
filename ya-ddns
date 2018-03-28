@@ -38,7 +38,7 @@ if [[ ip != last_ip ]]; then
 	if [[ $answer != "" ]]; then
 		echo -e "\\e[32mGOOD!\\e[0m"
 		# Если видим GOOD!, значит запись изменена. Запишем IP в файл.
-		echo $ip > $last_ip
+		echo "$ip" > "$last_ip"
 	else
 		echo -e "\\e[33m$post\\e[0m"
 		# Если не видим GOOD!, значит запись не удалось изменить, и IP не обновлён.
