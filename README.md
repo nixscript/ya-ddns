@@ -1,5 +1,8 @@
 # ya-ddns
 DDNS Yandex
+[![Build Status](https://travis-ci.org/nixscript/ya-ddns.svg?branch=master)](https://travis-ci.org/nixscript/ya-ddns)
+[![GitHub License](https://img.shields.io/github/license/nixscript/ya-ddns.svg)](https://github.com/nixscript/ya-ddns/blob/master/LICENSE.md)
+[![GitHub Release](https://img.shields.io/github/release/nixscript/ya-ddns.svg)](https://github.com/nixscript/ya-ddns/releases)
 
 # Что нужно?
 - ОС — Linux
