@@ -1,0 +1,49 @@
+#!/bin/bash
+LAST_IP_FILE='ip.txt'						# Файл, в котором храниться последний прописанный IP
+GET_IP_URL='https://myexternalip.com/raw'	# адрес, сообщающий нам IP
+DOMAIN='tvoy.domen'							# Домен, записи DNS которого я редактирую 
+SUBDOMAIN='poddomen'						# Поддомен, для которого меняем IP
+TTL='14400'									# Время жизни DNS-записи в секундах.
+RECORD_ID='000000'							# Номер записи будет известен после добавления первой записи с помощью этого скрипта.
+TOKEN='KAKOYTOOCHENDLINNYYNABORBUKAV'		# Токен от яндекса
+# Токен получить у Яндекса: https://pddimp.yandex.ru/api2/admin/get_token
+
+ip=$(curl "$GET_IP_URL")
+echo "$ip"
+last_ip=$(cat "$LAST_IP_FILE")
+
+# Для начала надо добавить запись на сервер. Можно сделать это
+# и через веб-морду яндекса, но тогда сложнее узнать нужные
+# параметры Для добавления записи надо запустить скрипт с
+# параметром «add»
+if [[ $1 == "add" ]]; then
+	post=$(curl -H "PddToken: $TOKEN" -d "domain=$DOMAIN&type=A&subdomain=$SUBDOMAIN&ttl=$TTL&content=$ip" "https://pddimp.yandex.ru/api2/admin/dns/add")
+	# Отправили запрос на сервер Яндекса
+	answer=$(echo "$post" | grep -i "\"success\": \"ok\"")
+	# Если ответ положительный, получаем на экран параметры записи на сервере и прописываем в скрипт.
+	if [[ $answer != "" ]]; then
+		echo -e "\\e[32mGOOD! Added new record!\\n\\e[34m$post\\e[0m"
+	else
+		echo -e "\\e[33m$post\\e[0m"
+	fi
+	exit
+fi
+
+# После того, как запись добавлена и необходимые параметры
+# заменены в этом скрипте, достаточно просто запустить скрипт
+# без параметров.
+if [[ ip != last_ip ]]; then
+	post=$(curl -H "PddToken: $TOKEN" -d "domain=$DOMAIN&record_id=$RECORD_ID&subdomain=$SUBDOMAIN&ttl=$TTL&content=$ip" "https://pddimp.yandex.ru/api2/admin/dns/edit")
+	answer=$(echo "$post" | grep -i "\"success\": \"ok\"")
+	if [[ $answer != "" ]]; then
+		echo -e "\\e[32mGOOD!\\e[0m"
+		# Если видим GOOD!, значит запись изменена. Запишем IP в файл.
+		echo $ip > $last_ip
+	else
+		echo -e "\\e[33m$post\\e[0m"
+		# Если не видим GOOD!, значит запись не удалось изменить, и IP не обновлён.
+	fi
+else
+	echo -e "\\e[33mActual IP\\e[0m"
+	# Если видим Actual IP, значит IP не менялся и нечего дёргать яндекс без толку.
+fi
